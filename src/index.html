@@ -11,7 +11,7 @@ body {
 
 <script>
 
-let colorMap = "aqua, black, blue, fuchsia, gray, green, lime, maroon, navy, olive, purple, red, silver, teal, white, yellow".split(", ");
+let colorMap = "aqua, black, blue, fuchsia, gray, green, lime, maroon, navy, olive, purple, red, silver, teal, white, yellow, pink".split(", ");
 
 let canvas = document.getElementById("canvas");
 let context = canvas.getContext("2d");
@@ -49,7 +49,7 @@ function generateSpecies() {
 function scoreFitness(species) {
 	let score = 0;
 	for (let i = 0; i < colorCount; i++) {
-		if (species.colors[i] == 0) score++;
+		if (species.colors[i] == Math.floor(i / colorMap.length)) score++;
 	}
 
 	return score;
@@ -98,6 +98,6 @@ function nextGeneration() {
 
 initializePopulation();
 
-setInterval(nextGeneration, 100);
+setInterval(nextGeneration, 17);
 
 </script>
