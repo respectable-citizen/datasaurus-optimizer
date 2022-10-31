@@ -1,0 +1,103 @@
+
+<style>
+
+body {
+	margin: 0;
+}
+
+</style>
+
+<canvas id="canvas"></canvas>
+
+<script>
+
+let colorMap = "aqua, black, blue, fuchsia, gray, green, lime, maroon, navy, olive, purple, red, silver, teal, white, yellow".split(", ");
+
+let canvas = document.getElementById("canvas");
+let context = canvas.getContext("2d");
+
+canvas.width = window.innerWidth;
+canvas.height = window.innerHeight;
+
+const colorCount = 23 * 12;
+const populationSize = 1000;
+
+let population = [];
+
+function randomBetween(min, max) {
+	return Math.floor(Math.random() * (max - min + 1) + min)
+}
+
+function showSpecies(species) {
+	const size = 80;
+	for (let i = 0; i < colorCount; i++) {
+		let y = Math.floor(i / 23);
+		let x = i % 23;
+	
+		context.fillStyle = colorMap[species.colors[i]];
+		context.fillRect(x * size, y * size, size, size);
+	}
+}
+
+function generateSpecies() {
+	let species = {colors: []};
+	for (let i = 0; i < colorCount; i++) species.colors.push(randomBetween(0, colorMap.length - 1));
+
+	return species;
+}
+
+function scoreFitness(species) {
+	let score = 0;
+	for (let i = 0; i < colorCount; i++) {
+		if (species.colors[i] == 0) score++;
+	}
+
+	return score;
+}
+
+function initializePopulation() {
+	for (let i = 0; i < populationSize; i++) population.push(generateSpecies());
+}
+
+function nextGeneration() {
+	for (let i = 0; i < populationSize; i++) {
+		population[i].fitness = scoreFitness(population[i]);
+	}
+
+	population.sort((a, b) => {
+		if (a.fitness < b.fitness) return 1;
+		if (a.fitness > b.fitness) return -1;
+			return 0;
+	});
+
+	showSpecies(population[0]);
+
+	let newPopulation = [];
+	let speciesIndex = 0;
+	while (newPopulation.length < populationSize) {
+		let species = population[speciesIndex++];
+
+		for (let i = 0; i < species.fitness; i++) {
+			let newSpecies = structuredClone(species);
+	
+			for (let j = 0; j < colorCount; j++) {
+				if (randomBetween(1, 100) == 1) {
+					newSpecies.colors[j] = randomBetween(0, colorMap.length - 1);
+				}
+			}
+
+
+			newPopulation.push(newSpecies);
+		}
+	}
+
+	population = newPopulation.splice(0, populationSize);
+
+	console.log("New generation populated");
+}
+
+initializePopulation();
+
+setInterval(nextGeneration, 100);
+
+</script>
